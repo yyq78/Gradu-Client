@@ -18,8 +18,10 @@ const service = axios.create({
   // 请求拦截
   service.interceptors.request.use(
     (config: AxiosRequestConfig) => {
-      if (localStorage.tsToken) {
-        config.headers.Authorization = localStorage.tsToken;
+      const TOKEN = localStorage.getItem('tsToken');
+      if (TOKEN) {
+        config.headers['Content-Type'] = 'application/json';
+        config.headers['Authorization'] = `Bearer ${TOKEN}`;
       }
       return config;
     },
@@ -31,7 +33,7 @@ const service = axios.create({
   // 响应拦截
   service.interceptors.response.use(
     (response: AxiosResponse) => {
-      return response;
+      return response.data;
     },
     (err: any) => {
       let errMsg = '';
