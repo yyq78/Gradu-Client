@@ -15,8 +15,30 @@ const router = new VueRouter({
     },
     {
       path:'/index',
-      component:()=>import('../views/Home.vue')
-    }
+      component:()=>import('../views/Home.vue'),
+      children:[
+        {
+          path:"/",
+          component:()=>import('../views/NormalStaffPage.vue'),
+        },
+      {
+        path:'/useDevice',
+        component:()=>import('../views/EquipmentUseRequestForm.vue')
+      },
+      {
+        path:'/returnDevice',
+        component:()=>import('../views/EquipmentReturnRequestForm.vue')
+      },
+      {
+        path:'/personalUsageRecord',
+        component:()=>import('../views/PersonalUsageRecord.vue')
+      },
+      {
+        path:'/userProfile',
+        component:()=>import('../views/UserProfile.vue')
+      },
+    ]
+    },
   ]
 })
 
