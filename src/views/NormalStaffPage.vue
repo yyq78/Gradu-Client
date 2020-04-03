@@ -29,17 +29,6 @@
             </router-link>
           </el-col>
         </el-row>
-        <el-row :gutter="12">
-           <el-col :span="8"  class="card">
-             <router-link to="/userProfile"  tag="div">
-                <el-card shadow="always">
-                  <h2 class="title">个人中心</h2>
-                  <p>查看或修改个人信息</p>
-                  <img src="../assets/assets4.jpg"/>
-                </el-card>
-              </router-link>
-          </el-col>
-        </el-row>
     </div> 
 </template>
 <script>
@@ -48,11 +37,20 @@
     }
 </script>
 <style lang="less">
+
   .title{
-    font-size: 14px;
+    font-size: 16px;
+    text-align:center;
   }
   .title+p{
-    font-size:12px;
+    font-size:14px;
+    text-align:center;
+    margin-top:24px;
+    margin-bottom:100px;
+  }
+  .title+p img{
+    width:100%;
+  
   }
   .card:hover{
     cursor: pointer;

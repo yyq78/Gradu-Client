@@ -19,16 +19,6 @@ export default {
     return {
 
     }
-  },
-  methods: {
-    test() {
-      this.$axios.get('/test').then(res => {
-
-      })
-    }
-  },
-  created() {
-    this.test();
   }
 }
 </script>

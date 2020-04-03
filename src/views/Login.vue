@@ -7,10 +7,10 @@
           <div class="title">企业办公设备管理平台</div>
           <el-form  ref="login" :model="loginUser" :rules="loginRules">
             <el-form-item prop="account" key="acount1">
-              <el-input  type="text" placeholder="请输入账号" v-model="loginUser.account" prefix-icon="el-icon-user" ></el-input>
+              <el-input  type="text" autocomplete="on" placeholder="请输入账号" v-model="loginUser.account" prefix-icon="el-icon-user" ></el-input>
             </el-form-item>
             <el-form-item prop="password" key="pass1">
-              <el-input  type="password" show-password placeholder="请输入密码" v-model="loginUser.password" prefix-icon="el-icon-key"></el-input>
+              <el-input  type="password" autocomplete="on" show-password placeholder="请输入密码" v-model="loginUser.password" prefix-icon="el-icon-key"></el-input>
             </el-form-item>
           </el-form>
           <el-button type="primary" class="login_btn" @click="submitForm('login')">登录</el-button>
