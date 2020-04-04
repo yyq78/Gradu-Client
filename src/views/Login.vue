@@ -3,7 +3,7 @@
     <div class="login">
       <div class="login-content">
         <!-- <div class="logo"></div> -->
-        <div class="form" v-if="!isToSign">
+        <div class="form">
           <div class="title">企业办公设备管理平台</div>
           <el-form  ref="login" :model="loginUser" :rules="loginRules">
             <el-form-item prop="account" key="acount1">
@@ -13,119 +13,119 @@
               <el-input  type="password" autocomplete="on" show-password placeholder="请输入密码" v-model="loginUser.password" prefix-icon="el-icon-key"></el-input>
             </el-form-item>
           </el-form>
-          <el-button type="primary" class="login_btn" @click="submitForm('login')">登录</el-button>
           <div class="aline">
-            <el-checkbox v-model="checked">记住密码</el-checkbox>
-            <el-link type="primary" @click="toSign">没有账号？去注册</el-link>
+            <el-checkbox v-model="rememberPsw">记住密码</el-checkbox>
           </div>
-        </div>
-        <div class="form" v-else>
-          <div class="title">企业办公设备管理平台</div>
-          <el-form ref="sign" :model="signUser" :rules="signRules">
-            <el-form-item prop="signAccount" key="acount2">
-              <el-input type="text" placeholder="请输入账号" v-model="signUser.signAccount" prefix-icon="el-icon-user"></el-input>
-            </el-form-item>
-            <el-form-item prop="signPass" key="pass2">
-              <el-input type="password" show-password placeholder="请输入密码" v-model="signUser.signPass" prefix-icon="el-icon-key"></el-input>
-            </el-form-item>
-            <el-form-item prop="checkpass">
-              <el-input type="password" show-password placeholder="请确认密码" v-model="signUser.checkpass" prefix-icon="el-icon-key"></el-input>
-            </el-form-item>
-          </el-form>
-          <el-button type="primary" class="login_btn" @click="submitForm('sign')">注册</el-button>
+          <el-button type="primary" class="login_btn" @click="submitForm('login')">登录</el-button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import CryptoJS from "crypto-js";
 
-interface loginUser{
-  account:string,
-  password:string
-}
-interface signUser{
-  signAccount:string,
-  signPass:string,
-  checkpass:string,
-}
-interface loginRules{
-  account:validate[],
-  password:validate[],
-}
-interface signRules{
-  signAccount:validate[],
-  signPass:validate[],
-  checkpass:validate[],
-}
-interface validate{
-  required?:boolean,
-  validator?:any,
-  message:string,
-  trigger:string,
-  min?: number,
-  max?: number,
-}
-@Component
-export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
-  loginUser:loginUser= {
-    account:"",
-    password:""
-  }
-  signUser:signUser= {
-    signAccount:"",
-    signPass:"",
-    checkpass:"",
-  }
-  checked:boolean = false;
-  isToSign:boolean = false;
-  loginRules:loginRules = {
-    account:[{required:true,message:"请输入账号",trigger:'blur'}],
-    password:[{required:true,message:"请输入密码",trigger:'blur'}]
-  };
-  signRules:signRules = {
-    signAccount:[{required:true,message:"请输入账号",trigger:'blur'}],
-    signPass:[{required:true,message:"请输入密码",trigger:'blur'}],
-    checkpass:[{required:true,message:"两次输入密码不一致",trigger:'change',validator:this.validatePass2}]
-  }
-  toSign():void{
-    this.isToSign = true;
-  }
-  validatePass2 (rule:any, value:string, callback:any):void{
-    if (value === '') {
-      callback(new Error('请再次输入密码'));
-    } else if (value !== this.signUser.signPass) {
-      callback(new Error('两次输入密码不一致!'));
-    } else {
-      callback();
+export default {
+  data(){
+    return {
+      loginUser:{
+        account:"",
+        password:""
+      },
+      rememberPsw:false,
+      loginRules:{
+        account:[{required:true,message:"请输入账号",trigger:'blur'}],
+        password:[{required:true,message:"请输入密码",trigger:'blur'}]
+      }
     }
-  }
-  submitForm(formName:any){
-    (this.$refs[formName] as any).validate((valid:string) => {
-      if (valid) {
-        if(formName==='login'){
-          (this as any).$axios.post('/login',this.loginUser).then((res: any)=>{
+  },
+  methods:{
+    //设置cookie
+    setCookie(portId, psw, exdays) {
+      // Encrypt，加密账号密码
+      var cipherPortId = CryptoJS.AES.encrypt(portId+'',"secretkey123").toString();
+      var cipherPsw = CryptoJS.AES.encrypt(psw+'', "secretkey123").toString();
+      // console.log(cipherPortId+'/'+cipherPsw)//打印一下看看有没有加密成功
+
+      var exdate = new Date(); //获取时间
+      exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays); //保存的天数
+      //字符串拼接cookie，为什么这里用了==，因为加密后的字符串也有个=号，影响下面getcookie的字符串切割，你也可以使用更炫酷的符号。
+      window.document.cookie =
+        "currentPortId" +
+        "==" +
+        cipherPortId +
+        ";path=/;expires=" +
+        exdate.toGMTString();
+      window.document.cookie =
+        "password" +
+        "==" +
+        cipherPsw +
+        ";path=/;expires=" +
+        exdate.toGMTString();
+    },
+    //读取cookie
+    getCookie: function() {
+      if (document.cookie.length > 0) {
+        var arr = document.cookie.split("; "); //这里显示的格式请根据自己的代码更改
+        for (var i = 0; i < arr.length; i++) {
+          var arr2 = arr[i].split("=="); //根据==切割
+          //判断查找相对应的值
+          if (arr2[0] == "currentPortId") {
+            // Decrypt，将解密后的内容赋值给账号
+            var bytes = CryptoJS.AES.decrypt(arr2[1], "secretkey123");
+            this.loginUser.account = bytes.toString(CryptoJS.enc.Utf8)-0;
+          } else if (arr2[0] == "password") {
+            // Decrypt，将解密后的内容赋值给密码
+            var bytes = CryptoJS.AES.decrypt(arr2[1], "secretkey123");
+            this.loginUser.password = bytes.toString(CryptoJS.enc.Utf8);
+          }
+        }
+      }
+    },
+    //清除cookie
+    clearCookie: function() {
+      this.setCookie("", "", -1); 
+    },
+    submitForm(formName){
+      this.$refs[formName].validate((valid)=>{
+        if (valid) {
+          this.$axios.post('/login',this.loginUser).then((res)=>{
+            //登陆成功！！
             if(!res.error){
+              //返回token
               localStorage.setItem("tsToken",res.token);
+              if(this.rememberPsw === true){
+                //判断用户是否勾选了记住密码选项rememberPsw，传入保存的账号currentPortId，密码password，天数30
+                this.setCookie(this.loginUser.account, this.loginUser.password, 30);
+              }else{
+                this.clearCookie();
+              }
+              //这里是因为要在created中判断，所以使用了localstorage比较简单，当然你也可以直接根据cookie的长度or其他骚操作来判断有没有记住密码。
+              localStorage.setItem("rememberPsw", this.rememberPsw);
+              //更新state
+              this.$store.commit('login',this.loginUser);
               this.$router.push('/index');
             }else{
               this.$message.error(`${res.msg}`);
             }
           })
-        }else{
-          (this as any).$axios.post('/register',this.signUser).then((res:any)=>{
-            this.$message.success("注册成功！");
-            this.isToSign = false;
-          })
+        } else {
+          console.log('error submit!!');
+          return false;
         }
-      } else {
-        console.log('error submit!!');
-        return false;
-      }
-    });
+      });
+    },
+  },
+  //判断是否记住密码
+  //**注意这里的true是字符串格式，因为Boolean存进localstorage中会变成String**
+ created() {
+    //判断是否记住密码
+    if (localStorage.getItem("rememberPsw") == 'true') {
+      this.getCookie();
+      this.rememberPsw = true;
+    }
   }
 }
 </script>
@@ -168,7 +168,7 @@ export default class HelloWorld extends Vue {
       .aline{
         display: flex;
         justify-content: space-between;
-        padding-top:12px;
+        padding-bottom:12px;
       }
       .login_btn{
         width:100%;

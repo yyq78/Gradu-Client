@@ -12,7 +12,7 @@ import router from '../router'
 // 创建axios的实例
 const service = axios.create({
     timeout: 10000, // 超时时间
-    baseURL:"http://localhost:3000"
+    baseURL:"http://localhost:3000",
   });
   
   // 请求拦截
