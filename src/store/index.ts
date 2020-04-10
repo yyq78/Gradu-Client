@@ -8,10 +8,7 @@ export default new Vuex.Store({
       account:"",
       password:""
     },
-    tabPanes:[{
-      label:'设备',
-      name:'/index/admin/devices'
-    }],
+    tabPanes:[],
     activeName:'/index/admin/devices',
   },
   getters:{

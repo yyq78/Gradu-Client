@@ -27,7 +27,7 @@
                 入库审批
             </el-menu-item>
         </el-submenu>
-        <el-menu-item index="4">
+        <el-menu-item index="/index/admin/chart">
             <template slot="title">
                     <i class="el-icon-s-data"></i>
                     <span>统计图表</span>
@@ -36,7 +36,7 @@
     </el-menu>
     <div class="content">
         <div class="topNav">
-            <el-tabs v-model="activeTabName" type="card" closable @tab-remove="removeTab" @tab-click="changeRoute">
+            <el-tabs v-model="activeTabName" type="card" closable @tab-remove="removeTab" @tab-click="isSelect=false">
                 <el-tab-pane 
                 v-for="item in tabPanes"
                 :label="item.label"
@@ -61,7 +61,10 @@
                     rentedDevices:'设备租借情况',
                     useApprove:'出库审批',
                     returnApprove:'入库审批',
+                    chart:'统计图表'
                 },
+                activeTabName: '',
+                isSelect: false
             }
         },
         computed:{
@@ -70,27 +73,29 @@
                 'activeName' 
 
             ]),
-            activeTabName: {
-                get:function() {
-                    return this.activeName;
-                },
-                set: function(value){
-                    this.changeActiveName(value)
+        },
+        watch: {
+            activeTabName(newValue, oldValue) {
+                if(oldValue && !this.isSelect) {
+                    this.$router.push(newValue);
+                    
                 }
+                    this.changeActiveName(newValue);
             }
-
+        },
+        created(){
+            let path = this.$route.path;
+            let arr = path.split("/");
+            let name = arr[arr.length-1];
+            let label = this.tabMap[name];
+            this.addTabpane({
+                label,
+                name:path
+            });
+            this.activeTabName = this.$route.path;
 
         },
         methods:{
-            changeRoute(target){
-                //获得路径
-                let name = target.name;
-                let arr = name.split("/");
-                let pathName = arr[arr.length-1];
-                if(name!==this.activeTabName){
-                    this.$router.push(pathName);
-                }
-            },
             removeTab(target){
                 this.removeTabpane(target);
                 //如果删除的tab是激活的tab
@@ -99,8 +104,8 @@
                     let path = target.name;
                     //改变tab的激活项
                     this.changeActiveName(path);
-                    //改变路由
-                    this.changeRoute(target);
+                    //改变activeTabName
+                    this.activeTabName = path;
 
                 }
             },
@@ -119,15 +124,14 @@
                     });
                 }
                 this.changeActiveName(key);
+                this.isSelect = true
+                this.activeTabName = key;
             },
             ...mapMutations([
                 'changeActiveName',
                 'addTabpane',
                 'removeTabpane'
             ]),
-        },
-        created(){
-            this.$router.replace({name:'devices'});
         },
     }
 </script>

@@ -68,6 +68,11 @@ const router = new VueRouter({
               path:'returnApprove',
               name:'returnApprove',
               component:()=>import('../views/admin/returnApprove.vue')
+            },
+            {
+              path:'chart',
+              name:'chart',
+              component:()=>import('../views/admin/chart.vue')
             }
           ]
         }

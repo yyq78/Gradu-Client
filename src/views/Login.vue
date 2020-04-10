@@ -113,7 +113,7 @@ export default {
                 });
               }else{
                 this.$router.push({
-                  name:'admin'
+                  name:'devices'
                 });
               }
             }else{
