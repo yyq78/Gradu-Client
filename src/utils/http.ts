@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
-import { Message } from 'element-ui';
+import { Message,Loading } from 'element-ui';
+import _ from 'loadsh';
 import router from '../router'
 /**
  * http请求工具类
@@ -13,8 +14,8 @@ import router from '../router'
 const service = axios.create({
     timeout: 10000, // 超时时间
     baseURL:"http://localhost:3000",
-  });
-  
+});
+
   // 请求拦截
   service.interceptors.request.use(
     (config: AxiosRequestConfig) => {

@@ -1,6 +1,6 @@
 <template>
     <div class="useApprove-wrap">
-          <el-table :data="tableData" stripe border class="table" height="500">
+          <el-table :data="tableData" stripe border class="table" height="500" v-loading="loading">
             <el-table-column prop="deviceCategoryName" label="设备名称"></el-table-column>
             <el-table-column
             prop="userName"
@@ -43,6 +43,7 @@ export default {
     data(){
         return {
           tableData:[],
+          loading:true,
         }
     },
     created(){
@@ -52,6 +53,7 @@ export default {
         getAllUseRequests(){
             this.$axios.get('/getAllUseRequests').then((res)=>{
                 this.tableData = res.data;
+                this.loading = false;
             });
         },
         handleClick(row){

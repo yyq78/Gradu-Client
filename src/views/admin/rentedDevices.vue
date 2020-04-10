@@ -1,28 +1,28 @@
 <template>
     <div class="main">
-        <el-table :data="rentedDevice" stripe border class="table">
-            <el-table-column prop="usedDeviceName" label="名称"></el-table-column>
+        <el-table :data="rentedDevice" stripe border class="table" v-loading="loading">
+            <el-table-column prop="deviceCategoryName" label="名称"></el-table-column>
             <el-table-column
-            prop="rentTime"
+            prop="useDateTime"
             label="借出时间"
             >
             </el-table-column>
             <el-table-column
-            prop="owner"
+            prop="userName"
             label="使用者"
             >
             </el-table-column>
             <el-table-column
-            prop="ownerDepartment"
+            prop="userDepartment"
             label="所在部门"
             >
             </el-table-column>
             <el-table-column
-            prop="ownerId"
+            prop="userId"
             label="工号">
             </el-table-column>
             <el-table-column
-            prop="reason"
+            prop="useDescription"
             label="原因">
             </el-table-column>
         </el-table>
@@ -34,6 +34,7 @@ export default {
     data(){
         return {
             rentedDevice:[],
+            loading:true,
         }
     },
     created(){
@@ -43,6 +44,7 @@ export default {
         getAllRentedDevice(){
             this.$axios.get('/getAllRentedDevices').then((res)=>{
                 this.rentedDevice = res.data;
+                this.loading = false;
             });
         }
     }

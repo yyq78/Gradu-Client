@@ -45,10 +45,10 @@
                         <span class="demonstration">选择预约取设备时间</span>
                         <el-date-picker
                             v-model="timeInfo.dateTime"
-                            type="datetime"
+                            type="date"
                             placeholder="选择日期时间"
-                            format="yyyy 年 MM 月 dd 日 hh点mm分ss秒"
-                            value-format="yyyy年MM月dd日 hh点mm分ss秒">
+                            format="yyyy 年 MM 月 dd 日"
+                            value-format="yyyy年MM月dd日">
                         </el-date-picker>
                     </el-form-item>                    
                     <el-form-item>

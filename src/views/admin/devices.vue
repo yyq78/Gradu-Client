@@ -1,6 +1,6 @@
 <template>
     <div class="devices-wrap">
-        <el-table :data="devices" stripe border class="table" height="500">
+        <el-table :data="devices" stripe border class="table" height="500" v-loading="loading">
             <el-table-column prop="deviceName" label="名称"></el-table-column>
             <el-table-column
             prop="count"
@@ -26,6 +26,7 @@
         data(){
             return {
                 devices:[],
+                loading:true,
             }
         },
         created(){
@@ -36,6 +37,7 @@
                 //获取全部设备信息
                 this.$axios.get('/getAllDevices').then((res)=>{
                     this.devices = [...res.data, ...res.data];
+                    this.loading = false;
                 });
             }
 
