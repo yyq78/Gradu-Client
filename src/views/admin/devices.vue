@@ -1,0 +1,54 @@
+<template>
+    <div class="devices-wrap">
+        <el-table :data="devices" stripe border class="table" height="500">
+            <el-table-column prop="deviceName" label="名称"></el-table-column>
+            <el-table-column
+            prop="count"
+            label="数量"
+            >
+            </el-table-column>
+            <el-table-column
+            prop="devicePrice"
+            label="价格"
+            >
+            </el-table-column>
+            <el-table-column
+            prop="time"
+            label="入库时间">
+            </el-table-column>
+             
+        </el-table>
+    </div>
+    
+</template>
+<script>
+    export default{
+        data(){
+            return {
+                devices:[],
+            }
+        },
+        created(){
+            this.getAllDevices();
+        },
+        methods:{
+            getAllDevices(){
+                //获取全部设备信息
+                this.$axios.get('/getAllDevices').then((res)=>{
+                    this.devices = [...res.data, ...res.data];
+                });
+            }
+
+        },
+
+
+    }
+</script>
+<style scoped>
+     .devices-wrap{
+        flex:1;
+        padding:24px;
+        box-sizing: border-box;
+        overflow-y: overlay;
+    }
+</style>

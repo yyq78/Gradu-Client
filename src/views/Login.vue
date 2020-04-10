@@ -106,7 +106,16 @@ export default {
               localStorage.setItem("rememberPsw", this.rememberPsw);
               //更新state
               this.$store.commit('login',this.loginUser);
-              this.$router.push('/index');
+              //根据权限不同跳转不同的用户页面
+              if(res.permissionId===0){
+                this.$router.push({
+                  name:'normal'
+                });
+              }else{
+                this.$router.push({
+                  name:'admin'
+                });
+              }
             }else{
               this.$message.error(`${res.msg}`);
             }

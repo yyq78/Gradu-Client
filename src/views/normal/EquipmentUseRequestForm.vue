@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <el-page-header @back="goBack" content="归还设备申请">
+    <div class="main">
+        <el-page-header @back="goBack" content="使用设备申请">
         </el-page-header>
         <el-steps :active="step" finish-status="success">
             <el-step title="步骤一" description="填写申请人信息及申请设备信息"></el-step>
-            <el-step title="步骤二" description="预约归还设备时间"></el-step>
+            <el-step title="步骤二" description="预约取设备时间"></el-step>
             <el-step title="步骤三" description="完成"></el-step>
         </el-steps>
         <div class="useRequest">
@@ -19,16 +19,19 @@
                     <el-form-item label="部门" prop="personDepartment">
                         <el-input v-model="requestBaseInfo.personDepartment" autocomplete="on"></el-input>
                     </el-form-item>
-                    <el-form-item label="归还设备" prop="deviceCategoryId">
-                        <el-select v-model="requestBaseInfo.deviceCategoryId">
+                    <el-form-item label="设备类型" prop="deviceCategoryId">
+                        <el-select v-model="requestBaseInfo.deviceCategoryName">
                             <el-option 
                             v-for="item in deviceCategoryList" 
-                            :key="item.deviceCategoryId" 
-                            :label="item.deviceCategoryName" 
-                            :value="item.deviceCategoryId"
-                            :disabled="!item.deviceCategoryRest"
+                            :key="item.deviceName" 
+                            :label="item.deviceName" 
+                            :value="item.deviceName"
+                            :disabled="!item.count"
                             ></el-option>
                         </el-select>
+                    </el-form-item>
+                    <el-form-item label="使用目的" prop="useAim">
+                        <el-input type="textarea" v-model="requestBaseInfo.useAim"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="next('requestInfo')">下一步</el-button>
@@ -37,32 +40,20 @@
                 </el-form>
             </div>
             <div v-else-if="step===1">
-                <el-form ref="deviceInfo" :model="deviceInfo" :rules="deviceInfoRules" label-width="auto">
-                    <el-form-item label="是否损坏" prop="isDamage">
-                        <el-radio-group v-model="deviceInfo.isDamage">
-                        <el-radio label="是" value="是"></el-radio>
-                        <el-radio label="否" value="否"></el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="设备损耗情况" prop="damageDes">
-                        <el-radio-group v-model="deviceInfo.damageDes">
-                        <el-radio label="可以继续使用" value="可以继续使用"></el-radio>
-                        <el-radio label="不能继续使用" value="不能继续使用"></el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="使用体验" prop="feedback">
-                        <el-rate v-model="deviceInfo.feedback" show-text></el-rate>
-                    </el-form-item>
-                    <el-form-item label="预约归还设备时间" prop="dateTime">
+                <el-form ref="timeInfo" :model="timeInfo" :rules="dateTimeRules">
+                    <el-form-item prop="dateTime">
+                        <span class="demonstration">选择预约取设备时间</span>
                         <el-date-picker
-                            v-model="deviceInfo.dateTime"
+                            v-model="timeInfo.dateTime"
                             type="datetime"
-                            placeholder="选择日期时间">
+                            placeholder="选择日期时间"
+                            format="yyyy 年 MM 月 dd 日 hh点mm分ss秒"
+                            value-format="yyyy年MM月dd日 hh点mm分ss秒">
                         </el-date-picker>
                     </el-form-item>                    
                     <el-form-item>
                         <el-button @click="prev">上一步</el-button>
-                        <el-button type="primary" @click="submit('deviceInfo')">确定</el-button>
+                        <el-button type="primary" @click="submit('timeInfo')">确定</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -82,15 +73,13 @@
                     personName:"",
                     personId:"",
                     personDepartment:"",
-                    deviceId:"",
+                    deviceCategoryName:"",
+                    useAim:"",
                 },
-                deviceInfo:{
-                    isDamage:"",
-                    damageDes:"",
-                    feedback:"",
+                timeInfo:{
                     dateTime:"",
                 },
-                deviceIdsList:[],
+                deviceCategoryList:[],
                 requestBaseInfoRules:{
                     personName: [
                         { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -101,30 +90,24 @@
                     personDepartment:[
                         { required:true, message:'请输入部门名称',trigger:'blur'}
                     ],
-                    deviceCategoryId:[
+                    deviceCategoryName:[
                         { required:true,message:'请选择设备类型',trigger:'change'}
                     ],
+                    useAim:[
+                        {required:true,message:'请输入设备使用用途',trigger:'blur'}
+                    ],
                 },
-                deviceInfoRules:{
-                    isDamage:[
-                        {required:true,message:'请选择是否损坏',trigger:'change'}
-                    ],
-                    damageDes:[
-                        {required:true,message:'请选择设备损耗情况',trigger:'change'}
-                    ],
-                    feedback:[{
-                        required:true,validator:this.checkRate,trigger:'change'
-                    }],
+                dateTimeRules:{
                     dateTime:[
-                        {required:true,message:'请选择预约归还时间',trigger:'change'}
+                        {required:true,message:'请输入预约拿取时间',trigger:'change'}
                     ]
                 },
                 step:0,
             }
         },
         computed:{
-            returnRequestForm(){
-                return Object.assign({},this.requestBaseInfo,this.deviceInfo);
+            useRequestForm(){
+                return Object.assign({},this.requestBaseInfo,this.timeInfo);
             }
         },
         methods:{
@@ -134,7 +117,7 @@
             submit(formName){
                 this.$refs[formName].validate((valid)=>{
                     if(valid){
-                        this.$axios.post('/addReturnRequest',this.returnRequestForm).then((res)=>{
+                        this.$axios.post('/addUseRequest',this.useRequestForm).then((res)=>{
                             this.step++;
                             this.$message.success("恭喜您！申请成功");
                              this.step++;
@@ -182,13 +165,6 @@
                     }
                 }
                 
-            },
-            checkRate(rule, value, callback){
-                if(!value){
-                    return callback(new Error('请为设备评分'));
-                }else{
-                    callback();
-                }
             }
         },
         created(){
@@ -197,7 +173,12 @@
     }
 </script>
 <style lang="less" scoped>
-
+.main{
+    padding:12px 24px;
+    width:100%;
+    height:100%;
+    box-sizing: border-box;
+}
 .el-page-header{
     line-height: 60px;
 }
@@ -218,8 +199,5 @@
     font-size:20px;
     font-weight:bold;
     line-height:30vh;
-}
-.el-rate{
-    padding-top:12px ;
 }
 </style>

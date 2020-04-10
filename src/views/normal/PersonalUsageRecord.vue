@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div class="main">
         <el-page-header @back="goBack" content="个人使用记录">
         </el-page-header>
-        <el-tabs v-model="activeName" tab-position="top">
+        <el-tabs v-model="activeName" tab-position="top" class="tab">
             <el-tab-pane label="使用设备记录" name="useRequests">使用设备记录</el-tab-pane>
             <el-tab-pane label="归还设备记录" name="returnRequests">归还设备记录</el-tab-pane>
         </el-tabs>
@@ -121,5 +121,17 @@
         }
     }
 </script>
-<style lang="less">
+<style lang="less" scoped>
+.main{
+    padding:12px 24px;
+    width:100%;
+    height:100%;
+    box-sizing: border-box;
+}
+.tab{
+    padding:24px 0;
+}
+.el-header{
+    line-height:60px;
+}
 </style>

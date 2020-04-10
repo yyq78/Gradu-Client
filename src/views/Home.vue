@@ -2,7 +2,7 @@
   <div class="home">
     <el-container>
       <el-header>
-        <h1>企业办公设备管理平台</h1>
+        <span>企业办公设备管理平台</span>
       </el-header>
       <el-main>
         <transition>
@@ -24,9 +24,13 @@ export default {
 </script>
 <style scoped lang="less">
   .el-header{
-    color: #333;
-    text-align: center;
+    color: #fff;
     line-height: 60px;
+    background-color:rgb(111,115,205);
+    text-align: left;
   }
-
+  .el-main {
+    padding: 0;
+    height: calc(100vh - 60px);
+  }
 </style>

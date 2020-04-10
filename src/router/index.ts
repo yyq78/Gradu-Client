@@ -11,6 +11,7 @@ const router = new VueRouter({
     },
     {
       path:'/login',
+      name:'login',
       component:()=>import('../views/Login.vue')
     },
     {
@@ -18,25 +19,58 @@ const router = new VueRouter({
       component:()=>import('../views/Home.vue'),
       children:[
         {
-          path:"/",
-          component:()=>import('../views/NormalStaffPage.vue'),
+          path:"normal",
+          component:()=>import('../views/normal/index.vue'),
+          children:[
+            {
+              path:'',
+              name:'normal',
+              component:()=>import('../views/normal/NormalStaffPage.vue')
+            },
+            {
+              path:'useDevice',
+              name:'useDevice',
+              component:()=>import('../views/normal/EquipmentUseRequestForm.vue')
+            },
+            {
+              path:'returnDevice',
+              name:'returnDevice',
+              component:()=>import('../views/normal/EquipmentReturnRequestForm.vue')
+            },
+            {
+              path:'personalUsageRecord',
+              name:'personalUsageRecord',
+              component:()=>import('../views/normal/PersonalUsageRecord.vue')
+            },
+          ]
         },
-      {
-        path:'/useDevice',
-        component:()=>import('../views/EquipmentUseRequestForm.vue')
-      },
-      {
-        path:'/returnDevice',
-        component:()=>import('../views/EquipmentReturnRequestForm.vue')
-      },
-      {
-        path:'/personalUsageRecord',
-        component:()=>import('../views/PersonalUsageRecord.vue')
-      },
-      {
-        path:'/userProfile',
-        component:()=>import('../views/UserProfile.vue')
-      },
+        {
+          path:'admin',
+          name:'admin',
+          component:()=>import('../views/admin/AdminPage.vue'),
+          children:[
+            {
+              path:'devices',
+              name:'devices',
+              component:()=>import('../views/admin/devices.vue')
+            },
+            {
+              path:'rentedDevices',
+              name:'rentedDevices',
+              component:()=>import('../views/admin/rentedDevices.vue')
+            },
+            {
+              path:'useApprove',
+              name:'useApprove',
+              component:()=>import('../views/admin/useApprove.vue')
+            },
+            {
+              path:'returnApprove',
+              name:'returnApprove',
+              component:()=>import('../views/admin/returnApprove.vue')
+            }
+          ]
+        }
     ]
     },
   ]
