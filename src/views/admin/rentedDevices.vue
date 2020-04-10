@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <el-table :data="rentedDevice" stripe border class="table" v-loading="loading">
+        <el-table :data="rentedDevice" stripe border class="table" v-loading="loading" height="300">
             <el-table-column prop="deviceCategoryName" label="名称"></el-table-column>
             <el-table-column
             prop="useDateTime"
@@ -52,10 +52,5 @@ export default {
 </script>
 
 <style scoped>
-    .main{
-        flex:1;
-        padding:24px;
-        box-sizing: border-box;
-        overflow-y: overlay;
-    }
+
 </style>

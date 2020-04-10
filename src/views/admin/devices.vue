@@ -1,6 +1,6 @@
 <template>
     <div class="devices-wrap">
-        <el-table :data="devices" stripe border class="table" height="500" v-loading="loading">
+        <el-table :data="devices" stripe border class="table" height="300" v-loading="loading">
             <el-table-column prop="deviceName" label="名称"></el-table-column>
             <el-table-column
             prop="count"
@@ -47,10 +47,5 @@
     }
 </script>
 <style scoped>
-     .devices-wrap{
-        flex:1;
-        padding:24px;
-        box-sizing: border-box;
-        overflow-y: overlay;
-    }
+
 </style>

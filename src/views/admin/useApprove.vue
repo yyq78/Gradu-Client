@@ -1,6 +1,6 @@
 <template>
     <div class="useApprove-wrap">
-          <el-table :data="tableData" stripe border class="table" height="500" v-loading="loading">
+          <el-table :data="tableData" stripe border class="table" height="300" v-loading="loading">
             <el-table-column prop="deviceCategoryName" label="设备名称"></el-table-column>
             <el-table-column
             prop="userName"
@@ -68,10 +68,5 @@ export default {
 </script>
 
 <style scoped>
-.useApprove-wrap{
-    flex:1;
-    padding:24px;
-    box-sizing: border-box;
-    overflow-y: overlay;
-}
+
 </style>

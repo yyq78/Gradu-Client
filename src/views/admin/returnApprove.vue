@@ -35,7 +35,7 @@ export default {
     data(){
         return {
           tableData:[],
-          loading:false,
+          loading:true,
         }
     },
     created(){
@@ -45,7 +45,7 @@ export default {
         getAllReturnRequests(){
             this.$axios.get('/getAllReturnRequests').then((res)=>{
                 this.tableData = [...res.data];
-                this.loading = true;
+                this.loading = false;
             });
         }
     }
@@ -53,10 +53,5 @@ export default {
 </script>
 
 <style scoped>
-.returnApprove-wrap{
-    flex:1;
-    padding:24px;
-    box-sizing: border-box;
-    overflow-y: overlay;
-}
+
 </style>

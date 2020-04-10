@@ -1,6 +1,5 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { Message,Loading } from 'element-ui';
-import _ from 'loadsh';
 import router from '../router'
 /**
  * http请求工具类
