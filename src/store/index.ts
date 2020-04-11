@@ -9,19 +9,10 @@ export default new Vuex.Store({
       password:""
     },
     tabPanes:[],
-    activeName:'/index/admin/devices',
-  },
-  getters:{
-    activeName:()=>{
-
-    }
   },
   mutations: {
     login(state,payload){
       state.user = {...state.user,...payload};
-    },
-    changeActiveName(state,name){
-      state.activeName = name;
     },
     addTabpane(state,value){
       state.tabPanes.push(value);

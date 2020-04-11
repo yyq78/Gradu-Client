@@ -70,17 +70,13 @@
         computed:{
             ...mapState([
                 'tabPanes',
-                'activeName' 
-
             ]),
         },
         watch: {
             activeTabName(newValue, oldValue) {
                 if(oldValue && !this.isSelect) {
                     this.$router.push(newValue);
-                    
                 }
-                    this.changeActiveName(newValue);
             }
         },
         created(){
@@ -99,14 +95,11 @@
             removeTab(target){
                 this.removeTabpane(target);
                 //如果删除的tab是激活的tab
-                if(target=== this.activeName){
+                if(target=== this.activeTabName){
                     let target = this.tabPanes[this.tabPanes.length-1];
                     let path = target.name;
                     //改变tab的激活项
-                    this.changeActiveName(path);
-                    //改变activeTabName
                     this.activeTabName = path;
-
                 }
             },
             handleSelect(key, keyPath) {
@@ -123,12 +116,10 @@
                         name:key,
                     });
                 }
-                this.changeActiveName(key);
                 this.isSelect = true
                 this.activeTabName = key;
             },
             ...mapMutations([
-                'changeActiveName',
                 'addTabpane',
                 'removeTabpane'
             ]),
