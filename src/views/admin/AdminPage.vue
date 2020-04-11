@@ -74,7 +74,7 @@
         },
         watch: {
             activeTabName(newValue, oldValue) {
-                if(oldValue && !this.isSelect) {
+                if(oldValue&&!this.isSelect) {
                     this.$router.push(newValue);
                 }
             }
