@@ -15,24 +15,32 @@
                 <span>设备租借情况</span>
             </template>
         </el-menu-item>
+        
         <el-menu-item index="/index/admin/returnedDevices">
             <template slot="title">
                 <i class="el-icon-s-cooperation"></i>
                 <span>设备归还情况</span>
             </template>
         </el-menu-item>
-        <el-menu-item index="/index/admin/useApprove">
-            <template slot="title">
-                <i class="el-icon-s-order"></i>
-                <span>出库审批</span>
-            </template>  
-        </el-menu-item>
-        <el-menu-item index="/index/admin/returnApprove">
+        <el-submenu index="1">
             <template slot="title">
                 <i class="el-icon-s-claim"></i>
-                <span>入库审批</span>
+                <span>审批</span>
             </template>
-        </el-menu-item>
+            <el-menu-item index="/index/admin/useApprove">
+                <template slot="title">
+                    <i class="el-icon-s-order"></i>
+                    <span>出库审批</span>
+                </template>  
+            </el-menu-item>
+            <el-menu-item index="/index/admin/returnApprove">
+                <template slot="title">
+                    <i class="el-icon-s-order"></i>
+                    <span>入库审批</span>
+                </template>
+            </el-menu-item>
+        </el-submenu>
+
         <el-menu-item index="/index/admin/chart">
             <template slot="title">
                     <i class="el-icon-s-data"></i>
