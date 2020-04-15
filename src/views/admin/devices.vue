@@ -14,7 +14,7 @@
             </el-table-column>
             <el-table-column
             prop="time"
-            label="入库时间">
+            label="上次修改时间">
             </el-table-column>
              
         </el-table>

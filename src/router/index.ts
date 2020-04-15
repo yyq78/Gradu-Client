@@ -60,6 +60,12 @@ const router = new VueRouter({
               component:()=>import('../views/admin/rentedDevices.vue')
             },
             {
+              path:'returnedDevices',
+              name:'returnedDevices',
+              component:()=>import('../views/admin/returnedDevices.vue')
+
+            },
+            {
               path:'useApprove',
               name:'useApprove',
               component:()=>import('../views/admin/useApprove.vue')

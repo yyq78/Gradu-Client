@@ -21,7 +21,7 @@ export default new Vuex.Store({
       //删除tabpanes里的一条数据
       let index;
       for(let i=0;i<state.tabPanes.length;i++){
-        if(state.tabPanes[i][name] === value){
+        if(state.tabPanes[i]["name"] === value){
           index = i;
           break;
         }

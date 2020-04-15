@@ -15,18 +15,24 @@
                 <span>设备租借情况</span>
             </template>
         </el-menu-item>
-        <el-submenu index="2">
+        <el-menu-item index="/index/admin/returnedDevices">
+            <template slot="title">
+                <i class="el-icon-s-cooperation"></i>
+                <span>设备归还情况</span>
+            </template>
+        </el-menu-item>
+        <el-menu-item index="/index/admin/useApprove">
             <template slot="title">
                 <i class="el-icon-s-order"></i>
-                <span>设备审批</span>
+                <span>出库审批</span>
+            </template>  
+        </el-menu-item>
+        <el-menu-item index="/index/admin/returnApprove">
+            <template slot="title">
+                <i class="el-icon-s-claim"></i>
+                <span>入库审批</span>
             </template>
-            <el-menu-item index="/index/admin/useApprove">
-                出库审批
-            </el-menu-item>
-            <el-menu-item index="/index/admin/returnApprove">
-                入库审批
-            </el-menu-item>
-        </el-submenu>
+        </el-menu-item>
         <el-menu-item index="/index/admin/chart">
             <template slot="title">
                     <i class="el-icon-s-data"></i>
@@ -61,7 +67,8 @@
                     rentedDevices:'设备租借情况',
                     useApprove:'出库审批',
                     returnApprove:'入库审批',
-                    chart:'统计图表'
+                    chart:'统计图表',
+                    returnedDevices:'设备归还情况',
                 },
                 activeTabName: '',
                 isSelect: false
@@ -82,24 +89,33 @@
         created(){
             let path = this.$route.path;
             let arr = path.split("/");
+            
             let name = arr[arr.length-1];
             let label = this.tabMap[name];
-            this.addTabpane({
-                label,
-                name:path
-            });
-            this.activeTabName = this.$route.path;
-
+            if(label){
+                this.addTabpane({
+                    label,
+                    name:path
+                });
+                this.activeTabName = this.$route.path;
+            }
         },
         methods:{
             removeTab(target){
                 this.removeTabpane(target);
                 //如果删除的tab是激活的tab
                 if(target=== this.activeTabName){
-                    let target = this.tabPanes[this.tabPanes.length-1];
-                    let path = target.name;
-                    //改变tab的激活项
-                    this.activeTabName = path;
+
+                    if(this.tabPanes.length>=1){
+                        let target = this.tabPanes[this.tabPanes.length-1];
+                        let path = target.name;
+                        //改变tab的激活项
+                        this.isSelect = false;
+                        this.activeTabName = path;
+                    }else{
+                        this.$router.push('/index/admin');
+                    }
+                    
                 }
             },
             handleSelect(key, keyPath) {
