@@ -127,6 +127,7 @@
                 }
             },
             handleSelect(key, keyPath) {
+                console.log(key);
                 //处理路径
                 let arr = key.split("/");
                 let route = arr[arr.length-1];

@@ -52,7 +52,7 @@ const router = new VueRouter({
             {
               path:'devices',
               name:'devices',
-              component:()=>import('../views/admin/devices.vue')
+              component:()=>import('../views/admin/devices.vue'),
             },
             {
               path:'rentedDevices',

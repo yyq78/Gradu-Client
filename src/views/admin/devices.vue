@@ -1,27 +1,80 @@
 <template>
     <div class="devices-wrap">
-        <el-button type="text" @click="dialogVisible = true">
-            <i class="el-icon-edit-outline"></i>
-            <span>添加新设备</span>
-        </el-button>
-        <el-table :data="devices" stripe border class="table" max-height="300" v-loading="loading">
-            <el-table-column prop="deviceName" label="名称"></el-table-column>
+        <div class="bar">
+            <el-button class="add" type="text" @click="dialogVisible = true">
+                <i class="el-icon-circle-plus-outline"></i>
+                <span>添加新设备</span>
+            </el-button>
+            <el-input
+                style="width:255px"
+                v-model="search"
+                size="mini"
+                placeholder="输入关键字搜索"
+                @change="handleChange">
+            </el-input>
+        </div>
+        <el-table 
+            :data="tableData" 
+            stripe 
+            border 
+            class="table" 
+            v-loading="loading" 
+            height="350px"
+            :default-sort = "{prop: 'time', order: 'descending'}">
+            <el-table-column
+            prop="time"
+            label="上次修改时间"
+            sortable
+            :filters = "filters"
+            :filter-method="filterHandler"
+            >
+            </el-table-column>
+            <el-table-column prop="deviceName" label="名称">
+            </el-table-column>
             <el-table-column
             prop="count"
+            sortable
             label="数量"
             >
             </el-table-column>
             <el-table-column
             prop="devicePrice"
             label="价格"
+            sortable
             >
             </el-table-column>
+            
             <el-table-column
-            prop="time"
-            label="上次修改时间">
+                fixed="right"
+                label="编辑"
+                width="100">
+                <template slot-scope="scope">
+                    <el-button @click="handleClick(scope.row)" type="text" size="small">
+                        <i class="el-icon-edit"></i>
+                        <span>编辑</span>
+                    </el-button>
+                </template>
             </el-table-column>
-             
+            <el-table-column
+                fixed="right"
+                label="删除"
+                width="100">
+                <template slot-scope="scope">
+                    <el-button size="small" type="text" @click="handleDelete(scope.row)">
+                        <i class="el-icon-delete"></i>
+                        <span>删除</span>
+                    </el-button>
+                </template>
+            </el-table-column>
         </el-table>
+        <el-pagination
+            class="right"
+            background
+            layout="prev, pager, next"
+            :total="devices.length"
+            @current-change="current_change"
+        >
+        </el-pagination>
         <el-dialog title="新增设备" :visible.sync="dialogVisible" width="50%">
               <el-form :model="form" :rules="rules" ref="addForm">
                 <el-form-item label="设备名称" :label-width="formLabelWidth" prop="deviceName">
@@ -40,14 +93,42 @@
                     type="date"
                     placeholder="选择日期"
                     :picker-options="pickerOptions"
-                    format="yyyy 年 MM 月 dd 日"
-                    value-format="yyyy年MM月dd日">
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addDevices">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="修改设备" :visible.sync="ModifyDialogVisible" width="50%">
+              <el-form :model="modifiedForm" :rules="rules" ref="addForm">
+                <el-form-item label="设备名称" :label-width="formLabelWidth" prop="deviceName">
+                    <el-input v-model="modifiedForm.deviceName" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="添加数量" :label-width="formLabelWidth" prop="count">
+                    <el-input-number v-model="modifiedForm.count" :min="1"></el-input-number>
+                </el-form-item>
+                <el-form-item label="设备价格" :label-width="formLabelWidth" prop="devicePrice">
+                    <el-input-number v-model="modifiedForm.devicePrice" :precision="2" :step="0.1"></el-input-number>
+                </el-form-item>
+                <el-form-item label="入库时间" :label-width="formLabelWidth" prop="time">
+                    <el-date-picker
+                    v-model="modifiedForm.time"
+                    align="right"
+                    type="date"
+                    placeholder="选择日期"
+                    :picker-options="pickerOptions"
+                    format="yyyy 年 MM 月 dd 日"
+                    value-format="yyyy年MM月dd日">
+                    </el-date-picker>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="ModifyDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="modifyDevices">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -58,9 +139,20 @@
         data(){
             return {
                 devices:[],
+                tableData:'',
                 loading:true,
                 dialogVisible:false,
+                ModifyDialogVisible:false,
+                search:'',
+                pageSize:5,
+                currentPage:1,
                 form: {
+                    deviceName: '',
+                    count: 1,
+                    devicePrice: 1.00,
+                    time: '',
+                },
+                modifiedForm:{
                     deviceName: '',
                     count: 1,
                     devicePrice: 1.00,
@@ -98,18 +190,53 @@
                         date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
                         picker.$emit('pick', date);
                         }
-                }]
+                }],
+                },
+            }
         },
+        computed:{
+            filters(){
+                let times = [...new Set(this.tableData.map(item=>item.time))];
+                return times.map((item)=>({text:item,value:item}));
             }
         },
         created(){
             this.getAllDevices();
         },
         methods:{
+            handleChange(value){
+                this.tableData = this.devices.filter(data => !search || data.deviceName.toLowerCase().includes(search.toLowerCase()));
+            },
+            current_change(currentPage){
+                this.currentPage = currentPage;
+                this.tableData = this.devices.slice((currentPage-1)*this.pageSize,currentPage*this.pageSize);
+            },
+            filterHandler(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
+            },
+            handleClick(row){
+                this.modifiedForm = row;
+                this.ModifyDialogVisible = true;
+            },
+            modifyDevices(){
+                this.$axios.post('/modifySomeDevice',this.modifiedForm).then((res)=>{
+                    this.$message.success('修改成功');
+                    this.ModifyDialogVisible = false;
+                    this.getAllDevices();
+                })
+            },
+            handleDelete(row){
+                this.$axios.post('/deleteSomeDevice',row).then((res)=>{
+                    this.$message.success('删除成功');
+                    this.getAllDevices();
+                })
+            },
             getAllDevices(){
                 //获取全部设备信息
                 this.$axios.get('/getAllDevices').then((res)=>{
                     this.devices = [...res.data];
+                    this.tableData = this.devices.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
                     this.loading = false;
                 });
             },
@@ -136,5 +263,17 @@
     }
 </script>
 <style scoped>
-
+.table{
+    margin-top:12px;
+}
+.bar{
+    display:flex;
+    justify-content: space-between;
+}
+/* .add{
+    background-color:rgb(50,218,221);
+    color:white;
+    outline:none;
+    border:none;
+} */
 </style>
