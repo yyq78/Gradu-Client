@@ -56,8 +56,8 @@
                         <el-date-picker
                             v-model="deviceInfo.dateTime"
                             type="datetime"
-                            format="yyyy 年 MM 月 dd 日 hh点mm分ss秒"
-                            value-format="yyyy年MM月dd日 hh点mm分ss秒"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd"
                             placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>                    

@@ -47,8 +47,8 @@
                             v-model="timeInfo.dateTime"
                             type="date"
                             placeholder="选择日期时间"
-                            format="yyyy 年 MM 月 dd 日"
-                            value-format="yyyy年MM月dd日">
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd">
                         </el-date-picker>
                     </el-form-item>                    
                     <el-form-item>

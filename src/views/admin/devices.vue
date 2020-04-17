@@ -143,7 +143,6 @@ import debounce from '../../utils/debounce';
         data(){
             return {
                 devices:[],
-                tableData:'',
                 loading:true,
                 dialogVisible:false,
                 ModifyDialogVisible:false,
@@ -237,8 +236,6 @@ import debounce from '../../utils/debounce';
                 this.$axios.get(`/getAllDevices?search=${this.search}&pageSize=${this.pageSize}&currentPage=${this.currentPage}`).then((res)=>{
                     this.devices = res.data;
                     this.total = res.total;
-                    // let times = [...new Set(this.data.map(item=>item.time))];
-                    // this.filters = times.map((item)=>({text:item,value:item}));
                     this.loading = false;
                 });
             },
