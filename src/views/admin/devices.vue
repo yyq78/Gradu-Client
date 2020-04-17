@@ -10,23 +10,23 @@
                 v-model="search"
                 size="mini"
                 placeholder="输入关键字搜索"
-                @change="handleChange">
+                @input="handleChange"
+            >
             </el-input>
         </div>
         <el-table 
-            :data="tableData" 
+            :data="devices" 
             stripe 
             border 
             class="table" 
             v-loading="loading" 
             height="350px"
-            :default-sort = "{prop: 'time', order: 'descending'}">
-            <el-table-column
+            :default-sort = "{prop: 'time', order: 'descending'}"
+            >
+            <el-table-column 
             prop="time"
             label="上次修改时间"
             sortable
-            :filters = "filters"
-            :filter-method="filterHandler"
             >
             </el-table-column>
             <el-table-column prop="deviceName" label="名称">
@@ -70,8 +70,11 @@
         <el-pagination
             class="right"
             background
-            layout="prev, pager, next"
-            :total="devices.length"
+            layout="total,sizes,prev, pager, next,jumper"
+            @size-change="handleSizeChange"
+            :page-sizes="[2,3,4,5]"
+            :page-size="pageSize"
+            :total="total"
             @current-change="current_change"
         >
         </el-pagination>
@@ -135,6 +138,7 @@
     
 </template>
 <script>
+import debounce from '../../utils/debounce';
     export default{
         data(){
             return {
@@ -146,6 +150,7 @@
                 search:'',
                 pageSize:5,
                 currentPage:1,
+                total:0,
                 form: {
                     deviceName: '',
                     count: 1,
@@ -194,26 +199,21 @@
                 },
             }
         },
-        computed:{
-            filters(){
-                let times = [...new Set(this.tableData.map(item=>item.time))];
-                return times.map((item)=>({text:item,value:item}));
-            }
-        },
         created(){
             this.getAllDevices();
         },
         methods:{
-            handleChange(value){
-                this.tableData = this.devices.filter(data => !search || data.deviceName.toLowerCase().includes(search.toLowerCase()));
+            handleSizeChange(val) {
+                this.pageSize = val;
+                this.getAllDevices();
             },
+            handleChange(){
+                this.currentPage= 1;
+                debounce(this.getAllDevices());
+            },            
             current_change(currentPage){
                 this.currentPage = currentPage;
-                this.tableData = this.devices.slice((currentPage-1)*this.pageSize,currentPage*this.pageSize);
-            },
-            filterHandler(value, row, column) {
-                const property = column['property'];
-                return row[property] === value;
+                this.getAllDevices();
             },
             handleClick(row){
                 this.modifiedForm = row;
@@ -234,9 +234,11 @@
             },
             getAllDevices(){
                 //获取全部设备信息
-                this.$axios.get('/getAllDevices').then((res)=>{
-                    this.devices = [...res.data];
-                    this.tableData = this.devices.slice((this.currentPage-1)*this.pageSize,this.currentPage*this.pageSize);
+                this.$axios.get(`/getAllDevices?search=${this.search}&pageSize=${this.pageSize}&currentPage=${this.currentPage}`).then((res)=>{
+                    this.devices = res.data;
+                    this.total = res.total;
+                    // let times = [...new Set(this.data.map(item=>item.time))];
+                    // this.filters = times.map((item)=>({text:item,value:item}));
                     this.loading = false;
                 });
             },
@@ -270,10 +272,7 @@
     display:flex;
     justify-content: space-between;
 }
-/* .add{
-    background-color:rgb(50,218,221);
-    color:white;
-    outline:none;
-    border:none;
-} */
+.right{
+    text-align:right;
+}
 </style>
