@@ -44,8 +44,8 @@
             :page-sizes="[2,3,4,5]"
             :page-size="pageSize"
             :total="total"
-            @current-change="current_change"
-        ></el-pagination>
+            @current-change="current_change">
+        </el-pagination>
     </div>
 </template>
 
