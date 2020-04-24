@@ -67,17 +67,18 @@
 </template>
 <script>
     import {mapState,mapMutations} from 'vuex';
+    const tabMap = {
+            devices:'设备',
+            rentedDevices:'设备租借情况',
+            useApprove:'出库审批',
+            returnApprove:'入库审批',
+            chart:'统计图表',
+            returnedDevices:'设备归还情况',
+    }
     export default{
         data(){
             return {
-                tabMap:{
-                    devices:'设备',
-                    rentedDevices:'设备租借情况',
-                    useApprove:'出库审批',
-                    returnApprove:'入库审批',
-                    chart:'统计图表',
-                    returnedDevices:'设备归还情况',
-                },
+                tabMap:tabMap,
                 activeTabName: '',
                 isSelect: false
             }

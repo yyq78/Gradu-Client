@@ -12,10 +12,21 @@
             </div>
         </el-card>
     </div>
+    <div class="charts">
+        <el-card class="box-card2">
+            <div id="chart3" style="width: 100%;height:500px;">   
+            </div>
+        </el-card>
+        <el-card class="box-card2">
+            <div id="chart4" style="width: 100%;height:500px;">   
+            </div>
+        </el-card>
+    </div>
 </div>
 </template>
 
 <script>
+const feedBackMap = ['极差','失望','一般','满意','惊喜'];
 export default {
     data(){
         return {
@@ -29,6 +40,8 @@ export default {
             outCountInMonth:[],
             inCountInMonth:[],
             countOfOut:[],
+            damagesCounts:[],
+            feedBack:[]
         }
     },
     methods:{
@@ -152,6 +165,74 @@ export default {
             // 使用刚指定的配置项和数据显示图表。
             myChart.setOption(option);
         },
+        drawChart3() {
+            // 基于准备好的dom，初始化echarts实例
+            let myChart = this.$echarts.init(document.getElementById("chart3"),'macarons');
+            let _this = this;
+            // 指定图表的配置项和数据
+            let option = {
+                    title: [{
+                        text: '损耗情况',
+                    }, {
+                        subtext: '损耗分析',
+                        left: '45%',
+                        top: '65%',
+                        textAlign: 'center'
+                    }],
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b} : {c} ({d}%)'
+                    },
+                    series: [
+                        {
+                            type: 'pie',
+                            name:'损耗量',
+                            radius : [0, 110],
+                            center: ['45%', '35%'],//饼图位置控制
+                            data: _this.damagesCounts,
+                            label:{
+                                formatter: '{b} : ({d}%)'
+                            }
+                        }
+                    ]
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        },
+        drawChart4() {
+            // 基于准备好的dom，初始化echarts实例
+            let myChart = this.$echarts.init(document.getElementById("chart4"),'macarons');
+            let _this = this;
+            // 指定图表的配置项和数据
+            let option = {
+                title: [{
+                    text: '用户反馈',
+                },{
+                    subtext: '满意度分析',
+                    left: '45%',
+                    top: '65%',
+                    textAlign: 'center'
+                }],
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b} : {c} ({d}%)'
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        name:'满意度',
+                        radius : [0, 110],
+                        center: ['45%', '35%'],//饼图位置控制
+                        data: _this.feedBack,
+                        label:{
+                            formatter: '{b} : ({d}%)'
+                        }
+                    },
+                ]
+            };
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        },
         getStorageData(){
             this.$axios.get('/getDevicesStorage').then((res)=>{
                 this.storageData = res.data;
@@ -208,11 +289,35 @@ export default {
                 this.deviceName = this.storageData.map((item)=>item.deviceName);
                 this.count = this.storageData.map((item)=>item.count);
                 this.pieCount = this.storageData.map((item)=>{return {name:item.deviceName,value:item.count}});
-        }
+        },
+        getFeedBackData(){
+            let damageData = this.$axios.get('/getDamagesCounts').then((res)=>{
+                this.damagesCounts = res.data.map((item)=>{
+                    return {
+                        value:item.count,
+                        name:item.deviceCategoryName
+                    }
+                });
+            });
+            let feedbackData = this.$axios.get('/getFeedBack').then((res)=>{
+                this.feedBack = res.data.map((item)=>{
+                    return {
+                        name:feedBackMap[item.deviceFeedBack-1],
+                        value:item.count
+                    }
+                });
+                
+            });
+            Promise.all([damageData,feedbackData]).then((res)=>{
+                this.drawChart3();
+                this.drawChart4();
+            });
+        },
     },
     mounted(){
         this.getStorageData();
         this.getInOutDeviceData();
+        this.getFeedBackData();       
     }
 }
 </script>
@@ -239,6 +344,9 @@ export default {
 
 .box-card {
     width: 100%;
+}
+.box-card2{
+    width:50%;
 }
 #storage{
     width:100%;

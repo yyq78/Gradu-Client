@@ -97,6 +97,7 @@ export default {
             this.$axios.post('/reduceReturnRequests',row).then((res)=>{
                 if(res){
                     this.tableData = this.tableData.filter((item)=>item.requestId!==row.requestId);
+                    this.$message.success('审批成功');
                 }
             });
         }

@@ -11,15 +11,15 @@
             <div v-if="step===0">
                 <el-form ref="requestInfo" :model="requestBaseInfo" :rules="requestBaseInfoRules" label-width="auto">
                     <el-form-item label="姓名" prop="personName">
-                        <el-input v-model="requestBaseInfo.personName" autocomplete="on"></el-input>
+                        <el-input v-model="requestBaseInfo.personName" autocomplete="on" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="工号" prop="personId">
-                        <el-input v-model="requestBaseInfo.personId" autocomplete="on"></el-input>
+                        <el-input v-model="requestBaseInfo.personId" autocomplete="on" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="部门" prop="personDepartment">
-                        <el-input v-model="requestBaseInfo.personDepartment" autocomplete="on"></el-input>
+                        <el-input v-model="requestBaseInfo.personDepartment" autocomplete="on" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="设备类型" prop="deviceCategoryId">
+                    <el-form-item label="设备类型" prop="deviceCategoryName">
                         <el-select v-model="requestBaseInfo.deviceCategoryName">
                             <el-option 
                             v-for="item in deviceCategoryList" 
@@ -66,6 +66,7 @@
     </div> 
 </template>
 <script>
+import CryptoJS from "crypto-js";
     export default{
         data(){
             return {
@@ -111,13 +112,28 @@
             }
         },
         methods:{
+            //读取cookie
+            getCookie: function() {
+                if (document.cookie.length > 0) {
+                    var arr = document.cookie.split("; "); //这里显示的格式请根据自己的代码更改
+                    for (var i = 0; i < arr.length; i++) {
+                        var arr2 = arr[i].split("=="); //根据==切割
+                        //判断查找相对应的值
+                        if (arr2[0] == "currentPortId") {
+                            // Decrypt，将解密后的内容赋值给账号
+                            var bytes = CryptoJS.AES.decrypt(arr2[1], "secretkey123");
+                            this.requestBaseInfo.personId = bytes.toString(CryptoJS.enc.Utf8)-0;
+                        }
+                    }
+                }
+            },
             goBack(){
-                this.$router.back();
+                this.$router.push({name:'normal'});
             },
             submit(formName){
                 this.$refs[formName].validate((valid)=>{
                     if(valid){
-                        this.$axios.post('/addUseRequest',this.useRequestForm).then((res)=>{
+                        this.$axios.post('/addUseRequest',{...this.useRequestForm,status:0}).then((res)=>{
                             this.step++;
                             this.$message.success("恭喜您！申请成功");
                              this.step++;
@@ -135,6 +151,18 @@
                 this.$axios.get('/getDeviceCategoryList').then((res)=>{
                     this.deviceCategoryList = res.data;
                 })
+            },
+            getUserBasic(){
+                this.$axios.post('/getUsersBasic',{id:this.requestBaseInfo.personId}).then((res)=>{
+                    this.requestBaseInfo.personName = res.data[0]['userName'];
+                    this.requestBaseInfo.personDepartment = res.data[0]['userDepartment'];
+                })
+                let otherInfo = this.$route.params;
+                if(otherInfo){
+                    this.requestBaseInfo.deviceCategoryName = otherInfo.deviceCategoryName;
+                    this.requestBaseInfo.useAim  = otherInfo.useDescription;
+                    this.timeInfo.dateTime = otherInfo.useDateTime;
+                }
             },
             next(formName){
                 this.$refs[formName].validate((valid)=>{
@@ -169,6 +197,8 @@
         },
         created(){
             this.getDeviceCategoryList();
+            this.getCookie();
+            this.getUserBasic();
         }
     }
 </script>
