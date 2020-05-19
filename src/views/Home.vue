@@ -3,6 +3,7 @@
     <el-container>
       <el-header>
         <span>企业办公设备管理平台</span>
+        <span><i class=""></i>欢迎你，{username}</span>
       </el-header>
       <el-main>
         <transition>

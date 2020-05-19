@@ -4,16 +4,9 @@ Vue.use(Vuex)
 const arr:Array<any> = []
 export default new Vuex.Store({
   state:{
-    user:{
-      account:"",
-      password:""
-    },
     tabPanes:arr,
   },
   mutations: {
-    login(state,payload){
-      state.user = {...state.user,...payload};
-    },
     addTabpane(state,value){
       state.tabPanes.push(value);
     },

@@ -169,7 +169,7 @@ export default {
             // 基于准备好的dom，初始化echarts实例
             let myChart = this.$echarts.init(document.getElementById("chart3"),'macarons');
             let _this = this;
-            // 指定图表的配置项和数据
+            // 指定损耗情况的配置项和数据
             let option = {
                     title: [{
                         text: '损耗情况',
@@ -203,7 +203,7 @@ export default {
             // 基于准备好的dom，初始化echarts实例
             let myChart = this.$echarts.init(document.getElementById("chart4"),'macarons');
             let _this = this;
-            // 指定图表的配置项和数据
+            // 指定满意度的配置项和数据
             let option = {
                 title: [{
                     text: '用户反馈',
