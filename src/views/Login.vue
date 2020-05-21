@@ -88,6 +88,16 @@ export default {
     clearCookie: function() {
       this.setCookie("", "", -1); 
     },
+    //获得用户名、工号、所在部门,保存用户信息到sessionStorage
+    getUserBasic(){
+      this.$axios.post('/getUsersBasic',{"id":this.loginUser.account}).then((res)=>{
+        const {userName,userId,userDepartment} = res.data[0];
+        sessionStorage.setItem('userName',userName);
+        sessionStorage.setItem('userId',userId);
+        sessionStorage.setItem('userDepartment',userDepartment);
+      });
+    },
+    //登录
     submitForm(formName){
       this.$refs[formName].validate((valid)=>{
         if (valid) {
@@ -104,8 +114,8 @@ export default {
               }
               //这里是因为要在created中判断，所以使用了localstorage比较简单，当然你也可以直接根据cookie的长度or其他骚操作来判断有没有记住密码。
               localStorage.setItem("rememberPsw", this.rememberPsw);
-              //更新state
-              this.$store.commit('login',this.loginUser);
+              //保存用户信息
+              this.getUserBasic();
               //根据权限不同跳转不同的用户页面
               if(res.permissionId===0){
                 this.$router.push({
