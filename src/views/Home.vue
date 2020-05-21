@@ -32,10 +32,22 @@ export default {
       active:false
     }
   },
+  provide: function () {
+    return {
+      getUserData:this.getUserData
+    };
+  },
   created(){
     this.getSession();
   },
   methods:{
+    getUserData(){
+      return {
+        userId:this.userId,
+        userName:this.userName,
+        userDepartment:this.userDepartment
+      }
+    },
     //读取SessionStorage
     getSession: function() {
       this.userId = sessionStorage.getItem('userId');

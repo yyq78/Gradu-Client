@@ -124,6 +124,7 @@ import CryptoJS from "crypto-js";
                 step:0,
             }
         },
+        inject:['getUserData'],
         computed:{
             returnRequestForm(){
                 return Object.assign({},this.requestBaseInfo,this.deviceInfo);
@@ -137,21 +138,6 @@ import CryptoJS from "crypto-js";
                     this.deviceInfo.damageDes = '';
                 }
             },
-            //读取cookie
-            getCookie: function() {
-                if (document.cookie.length > 0) {
-                    var arr = document.cookie.split("; "); //这里显示的格式请根据自己的代码更改
-                    for (var i = 0; i < arr.length; i++) {
-                        var arr2 = arr[i].split("=="); //根据==切割
-                        //判断查找相对应的值
-                        if (arr2[0] == "currentPortId") {
-                            // Decrypt，将解密后的内容赋值给账号
-                            var bytes = CryptoJS.AES.decrypt(arr2[1], "secretkey123");
-                            this.requestBaseInfo.personId = bytes.toString(CryptoJS.enc.Utf8)-0;
-                        }
-                    }
-                }
-            },            
             goBack(){
                 this.$router.push({name:'normal'});
             },
@@ -175,12 +161,6 @@ import CryptoJS from "crypto-js";
             getDeviceCategoryList(){
                 this.$axios.get('/getDeviceCategoryList').then((res)=>{
                     this.deviceCategoryList = res.data;
-                })
-            },
-            getUserBasic(){
-                this.$axios.post('/getUsersBasic',{id:this.requestBaseInfo.personId}).then((res)=>{
-                    this.requestBaseInfo.personName = res.data[0]['userName'];
-                    this.requestBaseInfo.personDepartment = res.data[0]['userDepartment'];
                 })
             },
             next(formName){
@@ -224,7 +204,10 @@ import CryptoJS from "crypto-js";
         created(){
             this.getDeviceCategoryList();
             this.getCookie();
-            this.getUserBasic();
+            let userData = this.getUserData();
+            this.requestBaseInfo.personName = userData.userName;
+            this.requestBaseInfo.personId = userData.userId;
+            this.requestBaseInfo.personDepartment = userData.userDepartment;
         }
     }
 </script>
