@@ -203,7 +203,6 @@ import CryptoJS from "crypto-js";
         },
         created(){
             this.getDeviceCategoryList();
-            this.getCookie();
             let userData = this.getUserData();
             this.requestBaseInfo.personName = userData.userName;
             this.requestBaseInfo.personId = userData.userId;

@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -41,6 +42,7 @@ export default {
     this.getSession();
   },
   methods:{
+
     getUserData(){
       return {
         userId:this.userId,

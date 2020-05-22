@@ -26,7 +26,7 @@
 <script>
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import CryptoJS from "crypto-js";
-
+import {mapMutations} from 'vuex';
 export default {
   data(){
     return {
@@ -42,6 +42,9 @@ export default {
     }
   },
   methods:{
+    ...mapMutations([
+        'clearTabs'
+    ]),
     //设置cookie
     setCookie(portId, psw, exdays) {
       // Encrypt，加密账号密码
@@ -116,6 +119,7 @@ export default {
               localStorage.setItem("rememberPsw", this.rememberPsw);
               //保存用户信息
               this.getUserBasic();
+              this.clearTabs();
               //根据权限不同跳转不同的用户页面
               if(res.permissionId===0){
                 this.$router.push({
@@ -123,7 +127,7 @@ export default {
                 });
               }else{
                 this.$router.push({
-                  name:'devices'
+                  name:'admin'
                 });
               }
             }else{

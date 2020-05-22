@@ -22,6 +22,9 @@ export default new Vuex.Store({
       if(index!==undefined){
         state.tabPanes.splice(index,1);
       }
+    },
+    clearTabs(state,value){
+      state.tabPanes = [];
     }
   },
   actions: {
