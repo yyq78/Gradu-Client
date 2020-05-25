@@ -159,7 +159,7 @@ import CryptoJS from "crypto-js";
                 this.$refs['useRequest'].resetFields();
             },
             getDeviceCategoryList(){
-                this.$axios.get('/getDeviceCategoryList').then((res)=>{
+                this.$axios.get(`/getStaffUseDevices?userId=${this.requestBaseInfo.personId}`).then((res)=>{
                     this.deviceCategoryList = res.data;
                 })
             },
@@ -202,11 +202,11 @@ import CryptoJS from "crypto-js";
             }
         },
         created(){
-            this.getDeviceCategoryList();
             let userData = this.getUserData();
             this.requestBaseInfo.personName = userData.userName;
             this.requestBaseInfo.personId = userData.userId;
             this.requestBaseInfo.personDepartment = userData.userDepartment;
+            this.getDeviceCategoryList();
         }
     }
 </script>

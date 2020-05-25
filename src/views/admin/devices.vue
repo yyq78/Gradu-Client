@@ -226,10 +226,22 @@ import debounce from '../../utils/debounce';
                 })
             },
             handleDelete(row){
-                this.$axios.post('/deleteSomeDevice',row).then((res)=>{
-                    this.$message.success('删除成功');
-                    this.getAllDevices();
-                })
+                this.$confirm('此操作将永久删除该设备, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post('/deleteSomeDevice',row).then((res)=>{
+                        this.$message.success('删除成功');
+                        this.getAllDevices();
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
+                
             },
             getAllDevices(){
                 //获取全部设备信息

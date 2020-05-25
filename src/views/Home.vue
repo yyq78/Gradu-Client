@@ -8,7 +8,7 @@
           placement="top-start"
           trigger="hover"
           >
-          <span><i class="item el-icon-user"></i> 欢迎你，{{userName}}</span>
+          <span key="userName"><i class="item el-icon-user"></i> 欢迎你，{{userName}}</span>
             <div class="item logout" @click="logout"><i class="el-icon-upload2"></i> 退出登录</div>
           <span slot="reference" ><el-avatar class="avator"> {{userName[0]}} </el-avatar></span>
         </el-popover>
@@ -55,6 +55,7 @@ export default {
       this.userId = sessionStorage.getItem('userId');
       this.userName = sessionStorage.getItem('userName');
       this.userDepartment = sessionStorage.getItem('userDepartment');
+      console.log(userName);
     },
     logout:function(){
       this.$router.push({name:'login'});

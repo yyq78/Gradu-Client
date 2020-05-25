@@ -109,9 +109,9 @@ export default {
             // 指定图表的配置项和数据
             let option = {
                     title: [{
-                        text: '借入借出情况',
+                        text: '借出归还情况',
                     }, {
-                        subtext: '年度借入借出情况统计',
+                        subtext: '年度借出归还情况统计',
                         left: '30%',
                         top: '65%',
                         textAlign: 'center'
@@ -262,6 +262,8 @@ export default {
             });
         },
         handleInOutData(data){
+            //本年度
+            let year = new Date().getFullYear();
             //每月借出数量
             let obj=[0,0,0,0,0,0,0,0,0,0,0,0];
             for(let i=0;i<data.length;i++){
@@ -272,8 +274,10 @@ export default {
                 }else{
                     date = this.formatDate(data[i].returnDateTime);
                 }
-                let month = date[1];
-                obj[month-1]+=1;
+                if(date[0] === year){
+                    let month = date[1];
+                    obj[month-1]+=1;
+                }
             }
             return obj;
         },
@@ -306,7 +310,6 @@ export default {
                         value:item.count
                     }
                 });
-                
             });
             Promise.all([damageData,feedbackData]).then((res)=>{
                 this.drawChart3();

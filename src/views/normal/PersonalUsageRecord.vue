@@ -194,7 +194,7 @@
                 this.getReturnRequests();
             },
             requestAgain(data){
-                this.$router.push({name:'useDevice',params:{...data}});
+                this.$router.push({name:'useDevice'});
             },
             goBack(){
                 this.$router.push({name:'normal'});
