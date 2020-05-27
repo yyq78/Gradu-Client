@@ -7,12 +7,12 @@ import router from '../router'
  * 请求拦截器 负责将客户端标识token值存储并放置在头部提交给服务端
  *
  * 响应拦截器 负责全局处理业务请求的网络或者业务错误
- */
+ */  
 
 // 创建axios的实例
 const service = axios.create({
     timeout: 10000, // 超时时间
-    baseURL:"http://www.msfee.xyz:3000",
+    baseURL:"http://www.msfee.xyz:3520",
 });
 
   // 请求拦截
